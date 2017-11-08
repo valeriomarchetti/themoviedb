@@ -1,6 +1,6 @@
 module.exports = (function() {
     var FilmModel = require('./film.model.js');
-    var GenreModel = require('./../genre/genre.model.js');
+    var GenreModel = require('./../genres/genre.model.js');
     
     var getAllMovies = function(req, res) {
         FilmModel.find()
@@ -19,46 +19,14 @@ module.exports = (function() {
             .populate({ path: "genre_ids2", select: '-_id -name' })
             .exec()
             .then(function(film){
-                /*
-                console.log(film);
-                for (key in film)
-                {
-                    console.log(key);
-                    if (film.hasOwnProperty(key)) {
-                        console.log("Own: " + key);
-                    }
-                }
-                */
+                
                 var FieldToFilter = [];
-                if (req.query.filter.length > 0)
+                if (req.query.filter && (req.query.filter.length > 0))
                     FieldToFilter = req.query.filter;
-                else
-                    FieldToFilter = ["title", "overview", "genre_ids"];
-
-                // 2. con hasOwnProperty
-                /*
-                var FilmData = film;
-                FilmData.mydata = "Ciao";
-                for (key in FilmData)
-                {
-                    if (FilmData.hasOwnProperty(key)) {
-                        console.log("key: " + key);
-                    }
-                }
-                */
-                //var FilmData = JSON.parse(JSON.stringify(film));
-                var FilmData = film;//.toObject();
+                
+                var FilmData = film.toObject();
                 var FilmDataOut = new Object();
-                /*
-                Object.keys(FilmData).map(function(key, index) {
-                    if (FilmData.hasOwnProperty(key)) {
-                        console.log("key: " + key + " | value: " + FilmData[key]);
-                    }
-                });
-                */
-                // 2. senza hasOwnProperty
-
-                // ?replace is valid
+                
                 if (req.query.replace === "true") {
                     GenreModel.find({},{"_id": 0})
                     .exec()
@@ -67,7 +35,7 @@ module.exports = (function() {
                         var GenreData = genre;
 
                         Object.keys(FilmData).map(function(key, index) {
-                            if (FieldToFilter.indexOf(key) !== -1)
+                            if ((FieldToFilter.length == 0) || (FieldToFilter.indexOf(key) !== -1))
                             //if (FieldToFilter.find(key))
                             {
                                 FilmDataOut[key] = FilmData[key];
@@ -100,9 +68,7 @@ module.exports = (function() {
             })
             .catch(function(err){
                 res.status(500).send(err);
-            });
-        
-        //res.status(200).json(FilmData);   
+            }); 
     }
 
     var getByQuery = function(req, res) {
@@ -119,14 +85,7 @@ module.exports = (function() {
 
     var insertOne = function(req, res) {
         var filmReq = req.body;
-        /*
-        var NewFilm = new FilmModel({
-            titolo: filmReq.titolo,
-            anno: filmReq.anno,
-            attori: filmReq.attori,
-            genere: filmReq.genere,
-        });
-        */
+        
         var NewFilm = new FilmModel(filmReq);
         NewFilm.save(function(err){
                 res.status(500).json(err);
@@ -140,9 +99,7 @@ module.exports = (function() {
                 throw err;
                 res.status(500).json(err);
         });
-    }
-
-    
+    }   
 
     return {
         getAllMovies:getAllMovies,

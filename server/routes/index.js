@@ -11,7 +11,7 @@ module.exports = function (app, express) {
         res.sendFile(path.join(__dirname, '..', '..', 'public', 'index.html'));
     });
 
-    app.use('/api/genre', require('./genre'));
+    app.use('/api/genres', require('./genres'));
     app.use('/api/films', require('./films'));
     app.use('/api/tvs', require('./tvs'));
 

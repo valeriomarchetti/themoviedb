@@ -6,6 +6,7 @@ genre.get('/', genreController.getAll);
 genre.get('/:id([0-9a-f]{24})', genreController.getOne);
 genre.get('/query', genreController.getByQuery);
 genre.post('/', genreController.insertOne);
+genre.delete('/:id([0-9a-f]{24})', genreController.delMovie);
 
 module.exports = genre;
 
