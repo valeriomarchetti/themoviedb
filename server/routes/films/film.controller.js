@@ -1,5 +1,6 @@
 module.exports = (function() {
     var FilmModel = require('./film.model.js');
+    var GenreModel = require('./../genre/genre.model.js');
     
     var getAllMovies = function(req, res) {
         FilmModel.find()
@@ -12,7 +13,141 @@ module.exports = (function() {
             });
     }
 
+    var getOne = function(req, res) {
+        // 1. asincrona?
+        FilmModel.findById(req.params.id)
+            .populate({ path: "genre_ids2", select: '-_id -name' })
+            .exec()
+            .then(function(film){
+                /*
+                console.log(film);
+                for (key in film)
+                {
+                    console.log(key);
+                    if (film.hasOwnProperty(key)) {
+                        console.log("Own: " + key);
+                    }
+                }
+                */
+                var FieldToFilter = [];
+                if (req.query.filter.length > 0)
+                    FieldToFilter = req.query.filter;
+                else
+                    FieldToFilter = ["title", "overview", "genre_ids"];
+
+                // 2. con hasOwnProperty
+                /*
+                var FilmData = film;
+                FilmData.mydata = "Ciao";
+                for (key in FilmData)
+                {
+                    if (FilmData.hasOwnProperty(key)) {
+                        console.log("key: " + key);
+                    }
+                }
+                */
+                //var FilmData = JSON.parse(JSON.stringify(film));
+                var FilmData = film;//.toObject();
+                var FilmDataOut = new Object();
+                /*
+                Object.keys(FilmData).map(function(key, index) {
+                    if (FilmData.hasOwnProperty(key)) {
+                        console.log("key: " + key + " | value: " + FilmData[key]);
+                    }
+                });
+                */
+                // 2. senza hasOwnProperty
+
+                // ?replace is valid
+                if (req.query.replace === "true") {
+                    GenreModel.find({},{"_id": 0})
+                    .exec()
+                    .then(function(genre){
+                        //var GenreData = JSON.parse(JSON.stringify(genre));                        
+                        var GenreData = genre;
+
+                        Object.keys(FilmData).map(function(key, index) {
+                            if (FieldToFilter.indexOf(key) !== -1)
+                            //if (FieldToFilter.find(key))
+                            {
+                                FilmDataOut[key] = FilmData[key];
+                                
+                                var value = FilmData[key];
+                                
+                                if (key == "genre_ids")
+                                {
+                                    FilmData[key].forEach(function(elem, index) {
+                                        for (var i = 0, len = GenreData.length; i < len; i++) {
+                                            if (GenreData[i]["id"] == elem)
+                                            {
+                                                console.log(GenreData[i]["id"] + " ====> " + GenreData[i]["name"]);
+                                                FilmDataOut[key][index] = GenreData[i]["name"];
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        res.status(200).json(FilmDataOut);
+                    })
+                    .catch(function(err){
+                        res.status(500).send(err);
+                    });
+                }
+                else {
+                    res.status(200).json(FilmData);
+                }
+            })
+            .catch(function(err){
+                res.status(500).send(err);
+            });
+        
+        //res.status(200).json(FilmData);   
+    }
+
+    var getByQuery = function(req, res) {
+        
+        FilmModel.find({title:req.query.title})
+            .exec()
+            .then(function(film){
+                res.status(200).json(film);
+            })
+            .catch(function(err){
+                res.status(500).send(err);
+            });
+    }
+
+    var insertOne = function(req, res) {
+        var filmReq = req.body;
+        /*
+        var NewFilm = new FilmModel({
+            titolo: filmReq.titolo,
+            anno: filmReq.anno,
+            attori: filmReq.attori,
+            genere: filmReq.genere,
+        });
+        */
+        var NewFilm = new FilmModel(filmReq);
+        NewFilm.save(function(err){
+                res.status(500).json(err);
+            })
+            .then(function (obj) {
+                console.log('Film salvato nel db');
+                res.status(200).json(obj);
+                
+            })
+            .catch(function (err) {
+                throw err;
+                res.status(500).json(err);
+        });
+    }
+
+    
+
     return {
-        getAllMovies:getAllMovies
+        getAllMovies:getAllMovies,
+        getByQuery:getByQuery,
+        getOne:getOne,
+        insertOne:insertOne
     }
 })();

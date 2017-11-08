@@ -9,3 +9,4 @@ mongoose.connect('mongodb://localhost:27017/test',
             console.log("connesso al db");
     }
 );
+mongoose.set('debug', true);
