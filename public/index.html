@@ -7,31 +7,52 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>THE MOVIE DB</title>
     <base href="/">
-    <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body>
-    <div class="container-fluid">
-        <div class="row uno">
-            <div class="col-md-2">
-                <img src="images/primary-green.svg" width="50px">
+<body ng-app="app">
+    <div ng-include="'app/ui/nav.template.html'"></div>
+    <h1>Lista films</h1>
+    <div ng-controller="FilmCtrl" class="row">
+        <div ng-if="showDettaglioFlag">
+            <div class="thumbnail">
+                <img src="{{'https://image.tmdb.org/t/p/w300_and_h450_bestv2/' + dettaglioFilm.backdrop_path}}" alt="...">
+                <div class="caption">
+                    <h1>{{dettaglioFilm.title}}</h1>
+                    <h3>{{dettaglioFilm.overview}}</h3>
+                </div>
             </div>
-            <div class="col-md-10">
-                <h1>THE MOVIE DB</h1>
+            <p><a href="#" ng-click="showList()" class="btn btn-primary" role="button">Visualizza lista</a></p>
+        </div>
+        <div class="col-sm-12 col-md-12">
+        <p>Filtra: </p><p><input type="text" ng-model="filtTitolo"></p>
+        <p>Filtra per genere:
+            <select ng-init="filtGenere = options[0]" ng-options="totGenere.id as totGenere.name for totGenere in totalGenere" ng-model="filtGenere">
+            </select>
+            {{filtGenere}}
+        </p>
+            
+        </div>
+        <div ng-hide="showDettaglioFlag" ng-repeat="(indexFilm,film) in films | filterFilmByGenre: filtGenere | filterFilmByTitolo: filtTitolo" class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img src="{{'https://image.tmdb.org/t/p/w300_and_h450_bestv2/' + film.backdrop_path}}" alt="...">
+                <div class="caption">
+                    <h3>{{film.title}}</h3>
+                    <p><a href="#" ng-click="showDettaglio(film._id)" class="btn btn-primary" role="button">Dettaglio</a></p>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="container">
-        <div class="row uno">
-            <div class="col-md-2">
-                <button class="btn btn-primary" onclick="alert('you clicked me')">click me</button>
-            </div>
-        </div>
-    </div>
     </div>
 </body>
-<script scr="bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="jquery/jquery.min.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="angular/angular.min.js"></script>
 <script src="js/main.js"></script>
+<script src="app/app.js"></script>
+<script src="app/film/film.controller.js"></script>
+<script src="app/film/film.filter.js"></script>
+<script src="app/film/film.service.js"></script>
+<script src="app/genre/genre.service.js"></script>
 
 </html>

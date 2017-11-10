@@ -36,7 +36,6 @@ module.exports = (function() {
 
                         Object.keys(FilmData).map(function(key, index) {
                             if ((FieldToFilter.length == 0) || (FieldToFilter.indexOf(key) !== -1))
-                            //if (FieldToFilter.find(key))
                             {
                                 FilmDataOut[key] = FilmData[key];
                                 
@@ -47,10 +46,7 @@ module.exports = (function() {
                                     FilmData[key].forEach(function(elem, index) {
                                         for (var i = 0, len = GenreData.length; i < len; i++) {
                                             if (GenreData[i]["id"] == elem)
-                                            {
-                                                console.log(GenreData[i]["id"] + " ====> " + GenreData[i]["name"]);
                                                 FilmDataOut[key][index] = GenreData[i]["name"];
-                                            }
                                         }
                                     });
                                 }
