@@ -1,16 +1,15 @@
 angular.module('app').service('FilmService',function($http){
     
-        var http_url = "http://localhost:3000";
         var getAllFilms = function() {
             return $http({
                 method: 'GET',
-                url: http_url + '/api/films'
+                url: '/api/films'
               });
         }
         var getFilm = function(id) {
             return $http({
                 method: 'GET',
-                url: http_url + '/api/films/' + id
+                url: '/api/films/' + id
               });
         }
         /*
