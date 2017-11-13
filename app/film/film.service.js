@@ -12,6 +12,30 @@ angular.module('app').service('FilmService',function($http){
                 url: '/api/films/' + id
               });
         }
+
+        var observerCallbacks = [];
+        
+          //register an observer
+        var registerObserverCallback = function(callback){
+            observerCallbacks.push(callback);
+        };
+    
+        //call this when you know 'foo' has been changed
+        var notifyObservers = function(){
+            angular.forEach(observerCallbacks, function(callback){
+                callback(searchVar);
+            });
+        };
+
+        var searchVar = "";
+        var setSearchVar = function(val){
+            searchVar = val;
+            notifyObservers();
+        }
+        var getSearchVar = function(val){
+            return searchVar;
+        }
+
         /*
         var delPizza = function($index) {
             console.log($index);
@@ -77,7 +101,10 @@ angular.module('app').service('FilmService',function($http){
     
         return {
             getAllFilms: getAllFilms,
-            getFilm: getFilm
+            getFilm: getFilm,
+            getSearchVar: getSearchVar,
+            setSearchVar: setSearchVar,
+            registerObserverCallback: registerObserverCallback
             /*
             delPizza: delPizza,
             addPizza: addPizza,

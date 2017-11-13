@@ -12,7 +12,8 @@
 </head>
 
 <body ng-app="app">
-    <div ng-include="'app/ui/nav.template.html'"></div>
+    <div ng-controller="SidenavCtrl" ng-include="'app/ui/nav.template.html'"></div>
+    <div class="main container">
     <h1>Lista films</h1>
     <div ng-controller="FilmCtrl" class="row">
         <div ng-if="showDettaglioFlag">
@@ -26,7 +27,7 @@
             <p><a href="#" ng-click="showList()" class="btn btn-primary" role="button">Visualizza lista</a></p>
         </div>
         <div class="col-sm-12 col-md-12">
-        <p>Filtra: </p><p><input type="text" ng-model="filtTitolo"></p>
+        <!--<p>Filtra: </p><p><input type="text" ng-model="filtTitolo"></p>-->
         <p>Filtra per genere:
             <select ng-init="filtGenere = options[0]" ng-options="totGenere.id as totGenere.name for totGenere in totalGenere" ng-model="filtGenere">
             </select>
@@ -44,6 +45,7 @@
             </div>
         </div>
     </div>
+    </div>
 </body>
 <script src="jquery/jquery.min.js"></script>
 <script src="bootstrap/js/bootstrap.min.js"></script>
@@ -54,5 +56,6 @@
 <script src="app/film/film.filter.js"></script>
 <script src="app/film/film.service.js"></script>
 <script src="app/genre/genre.service.js"></script>
+<script src="app/sidenav/sidenav.controller.js"></script>
 
 </html>

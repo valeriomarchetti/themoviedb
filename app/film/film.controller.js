@@ -19,6 +19,14 @@ angular.module('app').controller('FilmCtrl', function(FilmService, GenreService,
 
             });
 
+        var updateFoo = function(val){
+            $scope.filtTitolo = val;
+            console.log($scope.filtTitolo);
+        };
+        
+        FilmService.registerObserverCallback(updateFoo);
+        //$scope.filtTitolo = FilmService.getSearchVar();
+
         $scope.showDettaglio = function(id) { 
             $scope.getFilm(id);
         }
